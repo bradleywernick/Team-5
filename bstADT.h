@@ -1,4 +1,3 @@
-//Bradley Wernick
 #ifndef BSTADT_H
 #define BSTADT_H
 
@@ -7,11 +6,11 @@
 
 template<class T> class bstADT{
 private:
-	bstNode* root;
+	bstNode<T>* root; //root node of tree
 
 	void insertNode(T data, bstNode<T> *leaf); //takes a node and data, move through tree depending on data and provided node
-	bstNode *search(T data, bstNode<T> *leaf); //search for the node 
-	void destroy(bstNode *leaf); //destroys the tree through recursion
+	bstNode<T>* search(T data, bstNode<T> *leaf); //search for the node 
+	void destroy(bstNode<T>* leaf); //destroys the tree through recursion
 
 	bstNode<T>* rr_rotation(bstNode<T>* leaf); //right-right rotation
 	bstNode<T>* ll_rotation(bstNode<T>* leaf); //left-left rotation
@@ -186,7 +185,7 @@ template<class T> bstNode<T>* bstADT<T>::rl_rotation(bstNode<T>* leaf){
 	return rr_rotation(leaf); //return a right-right rotation of current leaf
 }
 
-template<class T> bstNode<T>* bstADT<T>::balanceTree(bstNode<T>* leaf){
+template<class T> bstNode<T>* bstADT<T>::balanceTree(bstNode<T>* leaf){ //leaf should be the root node of tree, just saying 
 	int balancer = difference(leaf); //get the weight of both sides of the tree and determine whci his heavier
 
 	if (balancer > 1){ //if left heavy

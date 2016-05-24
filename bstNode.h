@@ -1,4 +1,3 @@
-//Bradley Wernick
 #ifndef BSTNODE_H
 #define BSTNODE_H
 
