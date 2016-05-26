@@ -5,39 +5,39 @@
 using namespace std;
 
 bool login();
+bool registerUser();
 
 int main(){
 	int input = 0;
 	bool loggedIn = false;
 
-	cout << "\t\tFacebook \t\t" << endl;
-	cout << endl << endl;
+	cout << "\t\Facebook Login\t\t" << endl;
+	cout << endl;
 	cout << "\t\t[1] Login \t\t" << endl;
 	cout << "\t\t[2] Register \t\t" << endl;
 	cout << "\t\t[3] Exit \t\t" << endl;
-	cout << "\t\t\t"; cin >> input;
+	cout << "\t\t"; cin >> input;
 
 	switch (input){
 	case 1:
-		while (loggedIn == false){
+		do{
 			loggedIn = login();
 			if (loggedIn == false){
-				cout << "\t\t[1] Retry \t\t" << endl;
-				cout << "\t\t[2] Register \t\t" << endl;
+				cout << "\t\t[1] Retry\t\t" << endl << "\t\t[2] Register\t\t" << endl << "\t\t[3] Exit \t\t" << endl;
 				cout << "\t\t"; cin >> input;
-				if (input == 2){ break; }
-			}
-			break;
-		}
+				if (input == 2){ registerUser(); break; }
+				if (input == 3){ return 0; }
+			}else{ continue; }
+		} while (loggedIn == false);
+		break;
 	case 2:
-		cout << "\t\t" << "Under Construction" << endl;
-		system("pause");
+		registerUser();
 		break;
 	case 3:
 		return 0;
 	default:
 		cout << "\t\t" << "An Error has occured." << endl;
-		system("pause");
+		cout << "\t\t"; system("pause");
 		return 0;
 	}
 	return 0;
@@ -65,7 +65,7 @@ int main(){
 
 		if (UserInput == UserName && PassInput == Password) {
 			cout << "\t\tLogin Successfully!" << endl;
-			system("pause");
+			cout << "\t\t"; system("pause");
 			found = true;
 			break;
 		}
@@ -76,3 +76,40 @@ int main(){
 	}
 	return found;
 }
+
+ bool registerUser(){
+	 string line = " ";
+	 ifstream readFile("userdata.txt");
+	 string unameIn;
+	 string unusedpassString;
+	 string Username;
+	 string Password;
+	 char input;
+
+	 cout << "\t\t"; cout << "Welcome to the *Not a Facebook Clone* account creation" << endl;
+		cout << "\t\t"; cout << "Enter your username: ";
+		cin >> Username;
+
+		while (getline(readFile, line)) {
+			readFile >> unameIn >> unusedpassString;
+			if (Username == unameIn){
+				cout << endl << "Somebody else already has that name." << endl;
+				cout << "\t\tRetry? [Y/N]" << endl;
+				cout << "'\t\t"; cin >> input;
+				switch(input){
+				case 'Y': case 'y': 
+					continue;
+				case 'N': case 'n':
+					return false;
+				}
+			}else{
+				cout << "\t\t"; cout << "Enter your password: ";
+				cin >> Password;
+				ofstream writeFile("userdata.txt", ofstream::app); //Append rather than truncate
+				writeFile << Username << " " << Password << endl;
+				cout << endl << "\t\tRegistration Sucessful!" << endl;
+				cout << "\t\t"; system("pause");
+				return true;
+			}
+		}
+ }
