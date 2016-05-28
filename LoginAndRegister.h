@@ -1,5 +1,5 @@
-#ifndef USER_H
-#define USER_H
+#ifndef LoginAndRegister_H
+#define LoginAndRegister_H
 
 #include <iostream>
 #include <fstream>
@@ -7,18 +7,18 @@
 
 using namespace std;
 
-class User{
+class LoginAndRegister{
 private:
 	string Username, Password;
 	string inputUsername, inputPassword;
 public:
-	User(){};
+	LoginAndRegister(){};
 	void UserRegister(); //Register a new user. Can be changed to bool if needed
 	bool Login(); //login a user
 	string getCurrentUser();
 };
 
-void User::UserRegister(){
+void LoginAndRegister::UserRegister(){
 	string line = " ";
 	ifstream readFile("userdata.txt");
 	char input;
@@ -58,7 +58,7 @@ void User::UserRegister(){
 	return; //return true;
 }
 
-bool User::Login(){
+bool LoginAndRegister::Login(){
 	string line;
 	ifstream readFile("userdata.txt");
 	
@@ -93,7 +93,7 @@ bool User::Login(){
 	return found;
 }
 
-string User::getCurrentUser(){
+string LoginAndRegister::getCurrentUser(){
 	return Username;
 }
 

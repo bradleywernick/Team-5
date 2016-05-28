@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "User.h"
+#include "LoginAndRegister.h"
 
 using namespace std;
 
@@ -9,7 +9,7 @@ bool login();
 bool registerUser();
 
 int main(){
-	User u;
+	LoginAndRegister u;
 	int input = 0;
 	bool loggedIn = false;
 
