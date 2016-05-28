@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "User.h"
 
 using namespace std;
 
@@ -8,6 +9,7 @@ bool login();
 bool registerUser();
 
 int main(){
+	User u;
 	int input = 0;
 	bool loggedIn = false;
 
@@ -21,17 +23,17 @@ int main(){
 	switch (input){
 	case 1:
 		do{
-			loggedIn = login();
+			loggedIn = u.Login();
 			if (loggedIn == false){
 				cout << "\t\t[1] Retry\t\t" << endl << "\t\t[2] Register\t\t" << endl << "\t\t[3] Exit \t\t" << endl;
 				cout << "\t\t"; cin >> input;
-				if (input == 2){ registerUser(); break; }
+				if (input == 2){ u.UserRegister(); break; }
 				if (input == 3){ return 0; }
 			}else{ continue; }
 		} while (loggedIn == false);
 		break;
 	case 2:
-		registerUser();
+		u.UserRegister();
 		break;
 	case 3:
 		return 0;
@@ -42,7 +44,7 @@ int main(){
 	}
 	return 0;
 }
-
+/*
  bool login(){
 	string line = " ";
 	ifstream readFile("userdata.txt");
@@ -117,3 +119,4 @@ int main(){
 		cout << "\t\t"; system("pause");
 		return true;
  }
+ */
