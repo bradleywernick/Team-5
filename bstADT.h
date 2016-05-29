@@ -8,9 +8,14 @@ template<class T> class bstADT{
 private:
 	bstNode<T>* root; //root node of tree
 
-	void insertNode(T data, bstNode<T> *leaf); //takes a node and data, move through tree depending on data and provided node
+	void insert(T data, bstNode<T> *leaf); //takes a node and data, move through tree depending on data and provided node
 	bstNode<T>* search(T data, bstNode<T> *leaf); //search for the node 
 	void destroy(bstNode<T>* leaf); //destroys the tree through recursion
+	int countNodes(bstNode<T> *leaf); //count the nodes in the tree
+	
+	void preorderPrint(bstNode<T> *leaf); //print preorder tree
+	void postorderPrint(bstNode<T> *leaf); //print postorder tree
+	void inorderPrint(bstNode<T> *leaf); //print inorder tree
 
 	bstNode<T>* rr_rotation(bstNode<T>* leaf); //right-right rotation
 	bstNode<T>* ll_rotation(bstNode<T>* leaf); //left-left rotation
@@ -24,10 +29,11 @@ public:
 	void insert(T data); //public insert method
 	void destroyTree(); //public destroy method
 	bstNode<T>* search(T data); //public search method
-	int countNodes(bstNode<T> *leaf); //count the nodes in the tree
-	void preorderPrint(bstNode<T> *leaf); //print preorder tree
-	void postorderPrint(bstNode<T> *leaf); //print postorder tree
-	void inorderPrint(bstNode<T> *leaf); //print inorder tree
+	int countNodes(); //count the nodes in the tree
+	void preorderPrint(); //print preorder tree
+	void postorderPrint(); //print postorder tree
+	void inorderPrint(); //print inorder tree
+
 
 	int height(bstNode<T> *leaf); //height of tree
 	int difference(bstNode<T> *leaf); //height difference of tree
@@ -40,6 +46,10 @@ template<class T> bstADT<T>::bstADT(){
 
 template<class T> bstADT<T>::~bstADT(){
 	destroyTree(); //call destroy tree
+}
+
+template<class T> int bstADT<T>::countNodes(){
+	return countNodes(root);
 }
 
 template<class T> int bstADT<T>::countNodes(bstNode<T>* leaf){
@@ -110,6 +120,10 @@ template<class T> void bstADT<T>::destroy(bstNode<T> *leaf){
 		delete leaf;
 	}
 }
+
+template<class T> void bstADT<T>::preorderPrint(){ preorderPrint(root); }
+template<class T> void bstADT<T>::postorderPrint(){ postorderPrint(root); }
+template<class T> void bstADT<T>::inorderPrint(){ inorderPrint(root); }
 
 template<class T> void bstADT<T>::preorderPrint(bstNode<T>* leaf){
 	if (leaf != NULL){ //if root is NULl, noothing to print
