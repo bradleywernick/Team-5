@@ -121,17 +121,17 @@ template<class T> void bstADT<T>::preorderPrint(bstNode<T>* leaf){
 
 template<class T> void bstADT<T>::postorderPrint(bstNode<T>* leaf){
 	if (root != NULL){ //if root is NULl, noothing to print
-		preorderPrint(leaf->left); //print data in leaf left subtree
-		preorderPrint(leaf->right); //print data in leaf right subtree
+		postorderPrint(leaf->left); //print data in leaf left subtree
+		postorderPrint(leaf->right); //print data in leaf right subtree
 		cout << leaf->data << " "; //print data in leaf
 	}
 }
 
 template<class T> void bstADT<T>::inorderPrint(bstNode<T>* leaf){
 	if (root != NULL){ //if root is NULl, noothing to print
-		preorderPrint(leaf->left); //print data in leaf left subtree
+		inorderPrint(leaf->left); //print data in leaf left subtree
 		cout << leaf->data << " "; //print data in leaf
-		preorderPrint(leaf->right); //print data in leaf right subtree
+		inorderPrint(leaf->right); //print data in leaf right subtree
 	}
 }
 
