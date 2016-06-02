@@ -1,3 +1,4 @@
+//Bradley Wernick
 #ifndef LoginAndRegister_H
 #define LoginAndRegister_H
 
@@ -22,6 +23,7 @@ void LoginAndRegister::UserRegister(){
 	string line = " ";
 	ifstream readFile("userdata.txt");
 	char input;
+	int i = 0;
 	bool validUser = false;
 
 	cout << "\t\t" << "Welcome!" << endl;
@@ -29,12 +31,13 @@ void LoginAndRegister::UserRegister(){
 	while (!readFile.eof()) {
 		cout << "\t\t" << "Please enter a new username: ";
 		cin >> inputUsername;
+		
 		getline(readFile, Username, ' ');
 		getline(readFile, Password);
 		if (Username.compare(inputUsername) == 0){
 			cout << endl << "\t\t" << "Somebody else already has that name." << endl;
 			cout << "\t\t" << "Retry? [Y/N]" << endl;
-			cout << "\t\t"; cin >> input;
+			cout << "\t\t"; cin >> input; cin.ignore(100, '\n'); cin.clear();
 			switch (input){
 			case 'Y': case 'y':
 				continue;
