@@ -6,7 +6,7 @@
 //  Copyright © 2016 Margaret Patrick. All rights reserved.
 //
 
-#include "Table.hpp"
+#include "Table.h"
 #include <cmath>
 #include <iostream>
 using namespace std;
