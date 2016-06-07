@@ -10,7 +10,6 @@
 #define Security_h
 
 #include <fstream>
-
 #include "Table.h"
 
 using namespace std;

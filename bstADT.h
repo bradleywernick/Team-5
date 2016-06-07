@@ -1,3 +1,4 @@
+//Bradley Wernick
 #ifndef BSTADT_H
 #define BSTADT_H
 

@@ -1,7 +1,7 @@
 #ifndef USER_H
 #define USER_H
 #include "LList.h"
-#include "QueueADT.h"
+#include "Queue.h"
 #include "Stack.h"
 #include<fstream>
 #include<string>
@@ -18,9 +18,9 @@ protected:
 	string school;
 	string currentStatus;
 
-	LList<string> *friendList = new LList<string>;
-	Stack<string> *timeLine = new Stack<string>;
-	Queue<string> *friendRequests = new Queue<string>;
+	LList<string> *friendList = new LList<string>();
+	Stack<string> *timeLine = new Stack<string>();
+	Queue<string> *friendRequests = new Queue<string>();
 public:
 	//mutators
 	void changeName(string newName);
@@ -29,12 +29,12 @@ public:
 	void changeSchool(string newSchool);
 	void unFriend(string username);
 	//general functions
-	void currentStatus(string status);
-	void friendRequests();
-	void acceptFriendRequest(string userame);
-	void addFriend(string username); //sends a friend request
+	//void currentStatus(string status);
+	//void friendRequests();
+	//void acceptFriendRequest(string userame);
+	//void addFriend(string username); //sends a friend request
 	void write();
-	void writeFriends();
+    void writeFriends();
 	//constructors
 	User() {};
 	User(string username, string fullname, string job, string education, string age1) //takes 5 parametes and writes them to a file
@@ -67,9 +67,9 @@ public:
 			getline(userfile, school);
 			getline(userfile, age);
 
-			userfile.close;
+			userfile.close();
 
-			string friendLists = userName + "Friends.txt";
+			string friendLists = userName + "Friends";
 			ifstream listOfFriends;
 			listOfFriends.open(friendLists.c_str());
 			string friends;
@@ -104,7 +104,7 @@ void User::write()
 
 void User::writeFriends()
 {
-	string friendLists = userName + "Friends.txt";
+	string friendLists = userName + "Friends";
 	ofstream userfile;
 	userfile.open(friendLists.c_str());
 

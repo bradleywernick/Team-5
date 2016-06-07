@@ -6,6 +6,7 @@
 #include	<conio.h>
 #include <cstring>
 #include "Security.h"
+#include "UserClass.h"
 
 using namespace std;
 
@@ -60,6 +61,7 @@ int main(){
 	} while (input != '3');
 
 	if (loggedIn){
+		User U(getCurrentUser());
 		cout << "\t\t"; cout << "Proof of concept" << endl; cout << "\t\t"; system("pause");
 	}
 
@@ -68,6 +70,7 @@ int main(){
 
 void UserRegister(){
 	string inputUsername, inputPassword;
+	string fullname, job, education, age;
 	int i = 0;
 	bool validUser = false;
 
@@ -82,6 +85,30 @@ void UserRegister(){
 	S.add(inputUsername, inputPassword);
 
 	cout << endl << "\t\tRegistration Sucessful!" << endl;
+
+	cout << "Please enter some information about yourself:" << endl;
+	cout << "What's your full name?" << endl;
+
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	getline(cin, fullname, '\n');
+	cin.clear();
+
+	cout << "Where do you work?" << endl;
+	getline(cin, job, '\n');
+	cin.clear();
+
+	cout << "Where did you go to school?" << endl;
+	getline(cin, education, '\n');
+	cin.clear();
+
+	cout << "How old are you?" << endl;
+	getline(cin, age, '\n');
+	cin.clear();
+
+	cout << "Thank you for your time. Your account is being created." << endl;
+
+	User U(inputUsername, fullname, job, education, age);
+
 	cout << "\t\t"; system("pause");
 	return; //return true;
 }
@@ -115,7 +142,13 @@ string MaskedInput(){
 	int i = 0; //loop iterator
 	passwd[0] = _getch(); //conio.h get function, benefits are there is no screen echo, downside is it likely fails on non-windows
 	while (passwd[i] != '\r'){ //while no return key pressed
-		cout << '*'; //output *
+		if (passwd[i] == '\b'){
+			cout << '\b' << '\b';
+		}
+		else{
+			cout << '*'; //output *
+		}
+
 		i++; //iterate
 		passwd[i] = _getch(); //get next char from user
 	}

@@ -7,6 +7,7 @@ using namespace std;
 
 template<typename T> 
 class LList{
+	friend class User;
 public:
 	LList(){}
 	/*counts the nuber of nodes in the list
