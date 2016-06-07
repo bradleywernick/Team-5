@@ -6,38 +6,43 @@
 
 template<class T> class bstADT{
 private:
+	//Memeber variable
 	bstNode<T>* root; //root node of tree
 
+	//Functionality
 	void insert(T data, bstNode<T> *leaf); //takes a node and data, move through tree depending on data and provided node
-	bstNode<T>* search(T data, bstNode<T> *leaf); //search for the node 
+	bool remove(T data, bstNode<T> *leaf); //remove node with matching data
+
+	//For the destructor
 	void destroy(bstNode<T>* leaf); //destroys the tree through recursion
-	int countNodes(bstNode<T> *leaf); //count the nodes in the tree
+
+	//Searches
+	bstNode<T> findSmallest(bstNode<T> *leaf); //find smallest node
+	bstNode<T> findLargest(bstNode<T> *leaf); //find largest node
+	bstNode<T> searchBST(bstNode<T> *leaf, T targetkey); //search for the data in the node
 	
+	//Depth-first traversals
 	void preorderPrint(bstNode<T> *leaf); //print preorder tree
 	void postorderPrint(bstNode<T> *leaf); //print postorder tree
 	void inorderPrint(bstNode<T> *leaf); //print inorder tree
-
-	bstNode<T>* rr_rotation(bstNode<T>* leaf); //right-right rotation
-	bstNode<T>* ll_rotation(bstNode<T>* leaf); //left-left rotation
-	bstNode<T>* lr_rotation(bstNode<T>* leaf); //left-right rotation
-	bstNode<T>* rl_rotation(bstNode<T>* leaf); //right-left rotation
 
 public:
 	bstADT(); //constructor
 	~bstADT(); //destructor
 
-	void insert(T data); //public insert method
-	void destroyTree(); //public destroy method
-	bstNode<T>* search(T data); //public search method
-	int countNodes(); //count the nodes in the tree
+	//Functionality
+	void insert(T data); //public insert method, if root has data, calls the insert on root, resolves from there
+	bool remove(T data); //remove a node with input data. False if failed, true if success
+
+	//Searches
+	bstNode<T> findSmallest(); //find smallest node
+	bstNode<T> findLargest(); //find largest node
+	bstNode<T> searchBST(T targetkey); //search for node with targetkey
+
+	//Depth-first traversals
 	void preorderPrint(); //print preorder tree
 	void postorderPrint(); //print postorder tree
 	void inorderPrint(); //print inorder tree
-
-
-	int height(bstNode<T> *leaf); //height of tree
-	int difference(bstNode<T> *leaf); //height difference of tree
-	bstNode<T>* balanceTree(bstNode<T>* leaf); //balance the tree
 };
 
 template<class T> bstADT<T>::bstADT(){
@@ -45,21 +50,15 @@ template<class T> bstADT<T>::bstADT(){
 }
 
 template<class T> bstADT<T>::~bstADT(){
-	destroyTree(); //call destroy tree
+	destroy(root); //call destroy
 }
 
-template<class T> int bstADT<T>::countNodes(){
-	return countNodes(root);
-}
-
-template<class T> int bstADT<T>::countNodes(bstNode<T>* leaf){
-	if (leaf == NULL){ return 0; }
-	else{
-		int count = 1;
-		count += countNodes(leaf->left); //Add the number nodes in the left subtree to count
-		count += countNodes(leaf->right); //Add the number nodes in the right subtree to count
-		return count;
-	}
+template<class T> void bstADT<T>::destroy(bstNode<T>* leaf){
+	if (leaf != NULL){ //if not NULL
+		destroy(leaf->left); //destroy the left subtree
+		destroy(leaf->right); //destroy the right subtree
+		delete leaf; //delete the leaf
+	} //else, if NULL, nothing to do since it is destroyed already
 }
 
 template<class T> void bstADT<T>::insert(T data){
@@ -95,29 +94,66 @@ template<class T> void bstADT<T>::insert(T data, bstNode<T> *leaf){
 	}
 }
 
-template<class T> bstNode<T>* bstADT<T>::search(T data){
-	return search(data, root); //start the search at root
+template <class T> bool bstADT<T>::remove(T data){
+	return remove(data, root);
 }
 
-template<class T> bstNode<T>* bstADT<T>::search(T data, bstNode<T> *leaf){
-	if (leaf != NULL){ //if there is data
-		if (data == leaf->data){ return leaf; } //if equals to, return leaf
-		if (data < leaf->data){ return search(data, leaf->left); } //if less than, move a node to the left
-		else{ return search(data, leaf->right); } //otherwise, move a node to the right
-	}else{ //if null
-		return NULL; //return null
+template <class T> bool bstADT<T>::remove(T data, bstNode<T> *leaf){
+	if (leaf == NULL){ return false; }
+	if (data < leaf->data){ 
+		return remove(data, leaf->left); //move to the left
+	}else if (data > leaf->data){
+		return remove(data, leaf->right); //move to the right
+	}else{ //case node found
+		if (leaf->left == NULL){ //if left subtree is empty
+			leaf = leaf->right; //set right subtree to root
+			return true; //success
+		}else if (leaf->right == NULL){ //if right subtree is empty
+			leaf = leaf->left; //set left subtree to root
+			return true; //success
+		}else{ //not a leaf, so find largest node on left subtree
+			bstNode<T> *deleteNode = leaf; //save root in deleteNode
+			bstNode<T> *largest = findLargest(leaf->left); //get the largest node of left subtree and store it
+			deleteNode->data = largest->data; //deleteNode data set to largest data
+			return remove(largest->data, deleteNode->left); //call remove using largest data and left subtree of deleteNode
+		}
 	}
 }
 
-template<class T> void bstADT<T>::destroyTree(){
-	destroy(root);
+template<class T> bstNode<T> bstADT<T>::findSmallest(){
+	return findSmallest(root); //call the private method
 }
 
-template<class T> void bstADT<T>::destroy(bstNode<T> *leaf){
-	if (leaf != NULL){
-		destroy(leaf->left);
-		destroy(leaf->right);
-		delete leaf;
+template<class T> bstNode<T> bstADT<T>::findSmallest(bstNode<T> *leaf){
+	if (leaf->left == NULL){ //if left subtree is empty
+		return leaf; //return current node
+	}
+	return findSmallest(leaf->left); //else, move left a node
+}
+
+template<class T> bstNode<T> bstADT<T>::findLargest(){
+	return findLargest(root); //call the private method
+}
+
+template<class T> bstNode<T> bstADT<T>::findLargest(bstNode<T> *leaf){
+	if (leaf->right == NULL){ //if right subtree is empty
+		return leaf; //return current node
+	}
+	return findLargest(leaf->right); //else, move right a node
+}
+
+template<class T> bstNode<T> bstADT<T>::searchBST(T targetkey){
+	return searchBST(root, targetkey); //call the method starting with root
+}
+
+template<class T> bstNode<T> bstADT<T>::searchBST(bstNode<T> *leaf, T targetkey){
+	if (leaf == NULL){ return NULL; } //if null, return null
+	if (targetkey < leaf->data){
+		return searchBST(leaf->left, targetkey); //move one to the left
+	}else if (targetkey > leaf->data){
+		return searchBST(leaf->right, targetkey); //move one to the right
+	}else{ //otherwise
+		return leaf; //return current node
 	}
 }
 
@@ -134,7 +170,7 @@ template<class T> void bstADT<T>::preorderPrint(bstNode<T>* leaf){
 }
 
 template<class T> void bstADT<T>::postorderPrint(bstNode<T>* leaf){
-	if (root != NULL){ //if root is NULl, noothing to print
+	if (leaf != NULL){ //if root is NULl, noothing to print
 		postorderPrint(leaf->left); //print data in leaf left subtree
 		postorderPrint(leaf->right); //print data in leaf right subtree
 		cout << leaf->data << " "; //print data in leaf
@@ -142,82 +178,11 @@ template<class T> void bstADT<T>::postorderPrint(bstNode<T>* leaf){
 }
 
 template<class T> void bstADT<T>::inorderPrint(bstNode<T>* leaf){
-	if (root != NULL){ //if root is NULl, noothing to print
+	if (leaf != NULL){ //if root is NULl, noothing to print
 		inorderPrint(leaf->left); //print data in leaf left subtree
 		cout << leaf->data << " "; //print data in leaf
 		inorderPrint(leaf->right); //print data in leaf right subtree
 	}
-}
-
-template<class T> int bstADT<T>::height(bstNode<T>* leaf){
-	int h = 0;
-	if (leaf != NULL){
-		int leftHeight = height(leaf->left); //get height of left subtree
-		int rightHeight = height(leaf->right); //get height of right subtree
-		int temp = max(leftHeight, rightHeight); //get the largest value
-		h = temp + 1; //add 1 for base node
-		return h; //return h
-	}else{
-		return h;
-	}
-}
-
-template<class T> int bstADT<T>::difference(bstNode<T>* leaf){
-	int leftHeight = height(leaf->left); //get height of left subtree
-	int rightHeight = height(leaf->right); //get height of right subtree
-	int balancing = (leftHeight - rightHeight); //get the difference
-	return balancing; //return
-}
-
-template<class T> bstNode<T>* bstADT<T>::rr_rotation(bstNode<T>* leaf){
-	bstNode<T>* temp; //temp node
-	temp = leaf->right; //temp takes leaf->right
-	leaf->right = temp->left; //temp->right takes leaf->left
-	temp->left = leaf; //temp->left is leaf
-	return temp; //temp has all of leaf's values, return temp
-}
-
-template<class T> bstNode<T>* bstADT<T>::ll_rotation(bstNode<T>* leaf){
-	bstNode<T>* temp; //temp node
-	temp = leaf->left; //temp takes leaf->left
-	leaf->left = temp->right; //temp->left takes leaf->right
-	temp->right = leaf; //temp->right is leaf
-	return temp; //temp has all of leaf's values, return temp
-}
-
-template<class T> bstNode<T>* bstADT<T>::lr_rotation(bstNode<T>* leaf){
-	bstNode<T>* temp; //temp node
-	temp = leaf->left; //temp takes leaf->left
-	leaf->left = rr_rotation(temp); //leaf->left is a right-right rotation of current temp
-	return ll_rotation(leaf); //return a left-left rotation of current leaf
-}
-
-template<class T> bstNode<T>* bstADT<T>::rl_rotation(bstNode<T>* leaf){
-	bstNode<T>* temp; //temp node
-	temp = leaf->right; //temp takes leaf->right
-	leaf->right = ll_rotation(temp); //leaf->right is a left-left rotation of current temp
-	return rr_rotation(leaf); //return a right-right rotation of current leaf
-}
-
-template<class T> bstNode<T>* bstADT<T>::balanceTree(bstNode<T>* leaf){ //leaf should be the root node of tree, just saying 
-	int balancer = difference(leaf); //get the weight of both sides of the tree and determine whci his heavier
-
-	if (balancer > 1){ //if left heavy
-		if (difference(leaf->left) > 0){ //if left subtree is left heavy
-			leaf = ll_rotation(leaf); //do left-left rotation
-		}else{ //otherwise
-			leaf = lr_rotation(leaf); //do left-right rotation
-		}
-	}else if (balancer < -1){ //if right heavy
-		if (difference(leaf->right) > 0){ //if right subtree is left heavy
-			leaf = rl_rotation(leaf); //do right-left rotation
-		}else{ //otherwise
-			leaf = rr_rotation(leaf); //do right-right rotation
-		}
-	}
-
-	//if 0, nothing happens, tree is balanced
-	return leaf; //return leaf
 }
 
 #endif
