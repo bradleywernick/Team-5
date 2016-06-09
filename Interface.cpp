@@ -7,6 +7,7 @@
 #include <cstring>
 #include "Security.h"
 #include "UserClass.h"
+#include "InterfaceModule.h"
 
 using namespace std;
 
@@ -34,8 +35,8 @@ int main(){
 		cout << "\t\t" << "          [2] Register              " << endl;
 		cout << "\t\t" << "          [3] Exit                  " << endl << endl;
 		cout << "\t\t" << "====================================" << endl;
-		cout << "\t\t" << "Enter your choice: " << endl;
-		cout << "\t\t";  cin >> input;
+		cout << "\t\t" << "Enter your choice: ";
+		cin >> input; cout << endl;
 		cin.ignore(100, '\n'); cin.clear();
 
 		if (input == '1'){
@@ -50,20 +51,22 @@ int main(){
 			break;
 		}else{
 			cout << "\t\t";  system("CLS");
-			cout << endl << "Please enter a valid number." << endl;
+			cout << endl << "\t\t" << "Please enter a valid number." << endl;
+			cout << "\t\t"; system("pause");
 		}
 
-		if (loggedIn == true){ //if logged in
-			//Enter another interface for that user
-			break;
+		if (loggedIn){ //if logged in
+			User U(getCurrentUser()); //create user object
+			cout << "\t\t"; cout << "Loading Profile..." << endl; //Tell user some bullshit about loading times
+			cout << "\t\t"; system("pause"); //pause the program so they can push a button. 
+			InterfaceModule module(U); //Create the module
+			cout << U.getUser() << " " << U.getName() << " " << U.getAge() << " " << U.getEducation() << " " << U.getJob() << endl;
+			system("pause");
+			module.start(); //start up
+			loggedIn = false; //once exited, no longer logged in, therfore exit if, and return to main menu
 		}
 
 	} while (input != '3');
-
-	if (loggedIn){
-		User U(getCurrentUser());
-		cout << "\t\t"; cout << "Proof of concept" << endl; cout << "\t\t"; system("pause");
-	}
 
 	return 0;
 }
@@ -85,31 +88,39 @@ void UserRegister(){
 	S.add(inputUsername, inputPassword);
 
 	cout << endl << "\t\tRegistration Sucessful!" << endl;
+	cout << "\t\t"; system("pause");
 
-	cout << "Please enter some information about yourself:" << endl;
-	cout << "What's your full name?" << endl;
+	system("CLS");
+	cout <<  endl << "\t\t" << "Profile Creation:" << endl;
+	cout << "\t\t"; cout << "Please enter some information about yourself: " << endl;
+	cout << "\t\t"; cout << "What's your full name? ";
 
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	getline(cin, fullname, '\n');
 	cin.clear();
 
-	cout << "Where do you work?" << endl;
+	cout << endl; cout << "\t\t"; cout << "Where do you work? ";
 	getline(cin, job, '\n');
 	cin.clear();
 
-	cout << "Where did you go to school?" << endl;
+	cout << endl; cout << "\t\t"; cout << "Where did you go to school? ";
 	getline(cin, education, '\n');
 	cin.clear();
 
-	cout << "How old are you?" << endl;
+	cout << endl; cout << "\t\t"; cout << "How old are you? ";
 	getline(cin, age, '\n');
 	cin.clear();
 
-	cout << "Thank you for your time. Your account is being created." << endl;
+	cout << endl; cout << "\t\t"; cout << "Thank you for your time. Your account is being created." << endl;
 
-	User U(inputUsername, fullname, job, education, age);
+	User U(inputUsername, fullname, job, education, age, "Nothing"); //Blank current status because new user
 
 	cout << "\t\t"; system("pause");
+
+	ofstream writeFile("Username.txt", ofstream::app);
+	writeFile << inputUsername << endl;
+	writeFile.close();
+
 	return; //return true;
 }
 
@@ -143,14 +154,15 @@ string MaskedInput(){
 	passwd[0] = _getch(); //conio.h get function, benefits are there is no screen echo, downside is it likely fails on non-windows
 	while (passwd[i] != '\r'){ //while no return key pressed
 		if (passwd[i] == '\b'){
-			cout << '\b' << '\b';
+			cout << "\b \b";
+			i--; //backspace, thus move back one in the array
+			passwd[i] = _getch(); //get next char from user
 		}
 		else{
 			cout << '*'; //output *
+			i++; //iterate
+			passwd[i] = _getch(); //get next char from user
 		}
-
-		i++; //iterate
-		passwd[i] = _getch(); //get next char from user
 	}
 	return string(passwd); //cast char array to string and return
 }

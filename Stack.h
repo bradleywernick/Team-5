@@ -11,6 +11,7 @@ public:
 	Stack(){}
 	/* Removes and returns the top element of the stack*/
 	T pop();
+	T peek();
 	/*places data onto the top of the stack
 	*@param data to be placed on top of stack
 	*/
@@ -32,6 +33,11 @@ T Stack<T>::pop(){
 template<typename T>
 void Stack<T>::push(T data){
 	appendData(data);
+}
+
+template<typename T> T Stack<T>::peek(){
+	T data = headNode->getData();
+	return data;
 }
 
 #endif
