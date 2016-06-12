@@ -8,6 +8,8 @@
 #include<cstring>
 #include<iomanip>
 #include<iostream>
+#include <vector>
+
 class User{
 protected:
 	string userName;
@@ -28,6 +30,7 @@ public:
 	void changeAge(string newAge);
 	void changeJob(string newJob);
 	void changeSchool(string newSchool);
+	void changeUser(string);
 	void unFriend(string username);
 	
 	//get methods
@@ -39,13 +42,15 @@ public:
 	//general functions
     string getUser(){return userName;}
     string getCurrentStatus();
+
 	void setCurrentStatus(string status);
 	//void friendRequests();
 	void acceptFriendRequest(User &other);
 	void addFriend(User &other); //sends a friend request
 	void write();
 	void writeFriends();
-    void writeStatus();
+	void printTimeline();
+
 	//constructors
 	User() {};
 	User(string username, string fullname, string job, string education, string age1, string status){ //takes 5 parametes and writes them to a file
@@ -55,24 +60,11 @@ public:
 		school = education;
 		age = age1;
 
-		ofstream userfile;
-		userfile.open(userName.c_str());
-		userfile << userName << endl
-			<< name << endl
-			<< employment << endl
-			<< school << endl
-			<< age << endl;
-		userfile.close();
-        
-        string statusString = userName + "Status";
-        ofstream statusFile;
-        statusFile.open(statusString.c_str());
-        statusFile << status << endl;
-        statusFile.close();
-
-		timeLine->push(status);
+		write();
+		setCurrentStatus(status);
         
 	}
+
 	User(string username){
 		ifstream userfile;
 		userfile.open(username.c_str());
@@ -101,13 +93,8 @@ public:
                 pendingFriendList->appendData(pendingFriends);
             }
             
-            string statusString = userName + "Status";
-            ifstream statusFile;
-            statusFile.open(statusString.c_str());
-            string currentStatuses;
-            while (getline(statusFile, currentStatuses)){
-                timeLine->push(currentStatuses);
-            }
+			currentStatus = getCurrentStatus();
+
 		}else{
 			cout << endl << "No Such User" << endl;
 		}
@@ -115,8 +102,41 @@ public:
 	~User(){
 		write();
 		writeFriends();
-        writeStatus();
     }
+
+	bool operator<(User& b) {
+		string op = getUser();
+		string opB = b.getUser();
+		if (op < opB) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator>(User& b) {
+		string op = getUser();
+		string opB = b.getUser();
+		if (op > opB) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	void operator=(User& other){
+		userName = other.userName;
+		name = other.name;
+		age = other.age;
+		employment = other.employment;
+		school = other.school;
+		currentStatus = other.currentStatus;
+	}
+	friend ostream& operator<<(ostream &os, User &other) {
+		os << other.getUser() << endl;
+		return os;
+	}
 };
 
 void User::write(){
@@ -133,7 +153,7 @@ void User::write(){
 void User::writeFriends(){
 	string friendLists = userName + "Friends";
 	ofstream userfile;
-	userfile.open(friendLists.c_str(), ios::app);
+	userfile.open(friendLists.c_str());
 
 	Node<string>* node = friendList->headNode;
 
@@ -144,7 +164,7 @@ void User::writeFriends(){
     
     string pendingFriendLists = userName + "PendingFriends";
     ofstream otheruserfile;
-    otheruserfile.open(pendingFriendLists.c_str(), ios::app);
+    otheruserfile.open(pendingFriendLists.c_str());
     
     Node<string>* node2 = friendList->headNode;
     
@@ -154,19 +174,8 @@ void User::writeFriends(){
     }
 }
 
-void User::writeStatus(){
-    string statusString = userName + "Status";
-    ofstream statusFile;
-    statusFile.open(statusString.c_str(), ios::app);
-    Stack<string> *temp = new Stack<string>();
-    while (!timeLine->isEmpty())
-    {
-        temp->push(timeLine->pop());
-    }
-    while (!temp->isEmpty())
-    {
-        statusFile << temp->pop() << endl;
-    }
+void User::changeUser(string newUser){
+	userName = newUser;
 }
 
 void User::changeName(string newName){
@@ -216,12 +225,48 @@ void User::acceptFriendRequest(User &other){
 */
 void User::setCurrentStatus(string status)
 {
-    timeLine->push(status);
+	string statusString = userName + "Status";
+	ofstream statusFile;
+	statusFile.open(statusString.c_str(), ofstream::app);
+	statusFile << status << endl;
+	statusFile.close();
 }
 
 string User::getCurrentStatus()
 {
-    return timeLine->peek();
+	string line, stats;
+	string statusString = userName + "Status";
+	ifstream statusFile;
+	statusFile.open(statusString.c_str());
+
+	while (getline(statusFile, line)){
+		stats = line;
+	}
+
+	statusFile.close();
+	return stats;
 }
+
+void User::printTimeline(){
+	vector<string> timeline;
+	string stats;
+	string statusString = userName + "Status";
+	ifstream statusFile;
+	statusFile.open(statusString.c_str());
+
+	while (!statusFile.eof()){
+		getline(statusFile, stats);
+		timeline.push_back(stats);
+	}
+	statusFile.close();
+
+	reverse(timeline.begin(), timeline.end());
+
+	for (int i = 0; i < timeline.size(); i++){
+		cout << "\t\t"; cout << timeline[i] << endl;
+	}
+}
+
+
 
 #endif

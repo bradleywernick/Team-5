@@ -11,7 +11,7 @@ private:
 	bstNode<T>* root; //root node of tree
 
 	//Functionality
-	void insert(T data, bstNode<T> *leaf); //takes a node and data, move through tree depending on data and provided node
+	void insertNode(T data, bstNode<T> *leaf); //takes a node and data, move through tree depending on data and provided node
 	bool remove(T data, bstNode<T> *leaf); //remove node with matching data
 
 	//For the destructor
@@ -20,7 +20,7 @@ private:
 	//Searches
 	bstNode<T> findSmallest(bstNode<T> *leaf); //find smallest node
 	bstNode<T> findLargest(bstNode<T> *leaf); //find largest node
-	bstNode<T> searchBST(bstNode<T> *leaf, T targetkey); //search for the data in the node
+	T searchBST(bstNode<T> *leaf, T targetkey); //search for the data in the node
 	
 	//Depth-first traversals
 	void preorderPrint(bstNode<T> *leaf); //print preorder tree
@@ -38,7 +38,7 @@ public:
 	//Searches
 	bstNode<T> findSmallest(); //find smallest node
 	bstNode<T> findLargest(); //find largest node
-	bstNode<T> searchBST(T targetkey); //search for node with targetkey
+	T searchBST(T targetkey); //search for node with targetkey
 
 	//Depth-first traversals
 	void preorderPrint(); //print preorder tree
@@ -73,7 +73,7 @@ template<class T> void bstADT<T>::insert(T data){
 	}
 }
 
-template<class T> void bstADT<T>::insert(T data, bstNode<T> *leaf){
+template<class T> void bstADT<T>::insertNode(T data, bstNode<T> *leaf){
 	if (data < leaf->data){ //if the data is less than the node's data
 		if (leaf->left != NULL){ //if the input node is not null 
 			insertNode(data, leaf->left); //try again moved one node to the left
@@ -143,18 +143,18 @@ template<class T> bstNode<T> bstADT<T>::findLargest(bstNode<T> *leaf){
 	return findLargest(leaf->right); //else, move right a node
 }
 
-template<class T> bstNode<T> bstADT<T>::searchBST(T targetkey){
+template<class T> T bstADT<T>::searchBST(T targetkey){
 	return searchBST(root, targetkey); //call the method starting with root
 }
 
-template<class T> bstNode<T> bstADT<T>::searchBST(bstNode<T> *leaf, T targetkey){
+template<class T> T bstADT<T>::searchBST(bstNode<T> *leaf, T targetkey){
 	if (leaf == NULL){ return NULL; } //if null, return null
 	if (targetkey < leaf->data){
 		return searchBST(leaf->left, targetkey); //move one to the left
 	}else if (targetkey > leaf->data){
 		return searchBST(leaf->right, targetkey); //move one to the right
 	}else{ //otherwise
-		return leaf; //return current node
+		return leaf->data; //return current node
 	}
 }
 

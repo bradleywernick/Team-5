@@ -2,6 +2,7 @@
 #define LLIST_H
 #include "Node.h"
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -34,16 +35,29 @@ public:
 	/* emties the entire list
 	* sets head and tail pointer to nullptr
 	*/
+
+	vector<T> returnData(){
+		vector<T> data;
+		Node<T>* node = headNode;
+		while (node){
+			data.push_back(node->getData());
+			node = node->next();
+		}
+	}
+
 	void emptyList();
 	virtual ~LList();
 
 	void print(){
+		int i = 1;
 		Node<T>* node = headNode;
 		while (node){
-			cout << node->getData();
+			cout << "[" << i << "]" << node->getData() << endl;
 			node = node->next();
+			i++;
 		}
 	}
+	Node<T>* searchNode(T data);
 protected:
 	Node<T>* headNode = nullptr;
 	Node<T>* tailNode = nullptr;
@@ -52,7 +66,7 @@ private:
 	*@ param data returned node is to contain
 	* if data is not in list, or if data is in headNode, returns nullptr
 	*/
-	Node<T>* searchNode(T data);
+	
 	/*inserts a new node after the givin node
 	*@param node, node that comes before the new node
 	*@param newNode, node that will be inserted after the node

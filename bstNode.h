@@ -8,7 +8,7 @@ public:
 	//constructors
 	bstNode<T>(){ left = NULL; right = NULL; };
 	bstNode<T>(const T &d){ left = NULL; right = NULL; data = d; }
-	bstNode<T>(const Node<T> &other){ data = other.data; left = other->left; right = other->right; }
+	bstNode<T>(const bstNode<T> &other){ data = other.data; left = other->left; right = other->right; }
 
 	//members
 	T data; //The data, type generic.

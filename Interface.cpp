@@ -8,28 +8,31 @@
 #include "Security.h"
 #include "UserClass.h"
 #include "InterfaceModule.h"
+#include "bstADT.h"
 
 using namespace std;
 
-string Username;
-Security S = Security();
+string Username; //holds username from authntication if it is a success
+Security S = Security(); //For Login and Registering
+bstADT<User> *userList = new bstADT<User>(); //tree of all users
 
 void UserRegister(); //Register a new user. Can be changed to bool if needed
 bool Login(); //login a user
+void startUp();
 string getCurrentUser();
 string MaskedInput(); //masked input function. requires <cstring> and <conio.h>
 
 int main(){
 	bool loggedIn = false;
 	char input;
+	startUp();
 
 	do{
 		loggedIn = false; //If exit to main menu, login is false
 
 		system("CLS");
 		cout << "\t\t" << "====================================" << endl;
-		cout << "\t\t" << "            Not Facebook            " << endl;
-		cout << "\t\t" << "              Main Menu             " << endl;
+		cout << "\t\t" << "           Status Stash             " << endl; // GG
 		cout << "\t\t" << "====================================" << endl << endl;
 		cout << "\t\t" << "          [1] Login                 " << endl;
 		cout << "\t\t" << "          [2] Register              " << endl;
@@ -60,8 +63,7 @@ int main(){
 			cout << "\t\t"; cout << "Loading Profile..." << endl; //Tell user some bullshit about loading times
 			cout << "\t\t"; system("pause"); //pause the program so they can push a button. 
 			InterfaceModule module(U); //Create the module
-			cout << U.getUser() << " " << U.getName() << " " << U.getAge() << " " << U.getEducation() << " " << U.getJob() << endl;
-			system("pause");
+			startUp();
 			module.start(); //start up
 			loggedIn = false; //once exited, no longer logged in, therfore exit if, and return to main menu
 		}
@@ -113,7 +115,8 @@ void UserRegister(){
 
 	cout << endl; cout << "\t\t"; cout << "Thank you for your time. Your account is being created." << endl;
 
-	User U(inputUsername, fullname, job, education, age, "Nothing"); //Blank current status because new user
+	string status = "There is nothing here at the moment.";
+	User U(inputUsername, fullname, job, education, age, status); 
 
 	cout << "\t\t"; system("pause");
 
@@ -165,4 +168,16 @@ string MaskedInput(){
 		}
 	}
 	return string(passwd); //cast char array to string and return
+}
+
+void startUp()
+{
+	ifstream startUp;
+	startUp.open("Username.txt");
+	string users;
+	while (getline(startUp, users))
+	{
+		User temp(users);
+		userList->insert(temp);
+	}
 }
