@@ -16,7 +16,11 @@ public:
 	bstNode<T>* right; //Points to previous node
 
 	//operator overload
-	bstNode<T> &operator=(const bstNode<T>&);
+	bstNode<T> &operator=(const bstNode<T>& other){
+		data = other.data;
+		left = other.left;
+		right = other.right;
+	}
 };
 
 #endif

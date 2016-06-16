@@ -8,6 +8,7 @@
 #include<cstring>
 #include<iomanip>
 #include<iostream>
+#include <iterator>
 #include <vector>
 
 class User{
@@ -18,38 +19,42 @@ protected:
 	string employment;
 	string school;
 	string currentStatus;
+	string emote = "(._.)";
 
-	//LList<string> *friendList = new LList<string>();
-	Stack<string> *timeLine = new Stack<string>();
 public:
-    LList<string> *friendList = new LList<string>();
-    LList<string> *pendingFriendList = new LList<string>();
-    LList<string> *friendRequests = new LList<string>();
+	//LList<string> *friendList = new LList<string>();
+	//LList<string> *pendingFriendList = new LList<string>();
+	//LList<string> *friendRequests = new LList<string>();
+
 	//mutators
 	void changeName(string newName);
 	void changeAge(string newAge);
 	void changeJob(string newJob);
 	void changeSchool(string newSchool);
 	void changeUser(string);
-	void unFriend(string username);
+	void changeEmote(string newEmote){ emote = newEmote; }
 	
 	//get methods
 	string getName(){ return name; }
 	string getAge(){ return age; }
 	string getJob(){ return employment; }
 	string getEducation(){ return school; }
+	string getEmote(){ return emote; }
 	
 	//general functions
     string getUser(){return userName;}
     string getCurrentStatus();
 
 	void setCurrentStatus(string status);
-	//void friendRequests();
-	void acceptFriendRequest(User &other);
-	void addFriend(User &other); //sends a friend request
+	//void acceptFriendRequest(User &other);
+	//void addFriend(User &other); //sends a friend request
 	void write();
-	void writeFriends();
+	//void writeFriends();
+	//void getFileData();
 	void printTimeline();
+
+	//void printFriends();
+	//void printPendingFriendRequests();
 
 	//constructors
 	User() {};
@@ -59,39 +64,25 @@ public:
 		employment = job;
 		school = education;
 		age = age1;
-
+		emote = "(._.)";
 		write();
 		setCurrentStatus(status);
         
 	}
 
 	User(string username){
-		ifstream userfile;
-		userfile.open(username.c_str());
+		ifstream userfile(username);
 		if(!userfile.eof()){
 			getline(userfile, userName);
 			getline(userfile, name);
 			getline(userfile, employment);
 			getline(userfile, school);
 			getline(userfile, age);
+			getline(userfile, emote);
 
 			userfile.close();
 
-			string friendLists = userName + "Friends";
-			ifstream listOfFriends;
-			listOfFriends.open(friendLists.c_str());
-			string friends;
-			while (getline(listOfFriends, friends)){
-				friendList->appendData(friends);
-			}
-            
-            string pendingFriendLists = userName + "PendingFriends";
-            ifstream listOfPendingFriends;
-            listOfPendingFriends.open(pendingFriendLists.c_str());
-            string pendingFriends;
-            while (getline(listOfPendingFriends, pendingFriends)){
-                pendingFriendList->appendData(pendingFriends);
-            }
+			//getFileData();
             
 			currentStatus = getCurrentStatus();
 
@@ -99,80 +90,97 @@ public:
 			cout << endl << "No Such User" << endl;
 		}
 	}
+
 	~User(){
 		write();
-		writeFriends();
+		//writeFriends();
     }
 
 	bool operator<(User& b) {
-		string op = getUser();
-		string opB = b.getUser();
+		string op = userName;
+		string opB = b.userName;
 		if (op < opB) {
 			return true;
-		}
-		else {
+		}else {
 			return false;
 		}
 	}
 
 	bool operator>(User& b) {
-		string op = getUser();
-		string opB = b.getUser();
+		string op = userName;
+		string opB = b.userName;
 		if (op > opB) {
 			return true;
-		}
-		else {
+		}else {
 			return false;
 		}
 	}
+
 	void operator=(User& other){
-		userName = other.userName;
-		name = other.name;
-		age = other.age;
-		employment = other.employment;
-		school = other.school;
-		currentStatus = other.currentStatus;
+		userName = other.getUser();
+		name = other.getName();
+		age = other.getAge();
+		employment = other.getJob();
+		school = other.getEducation();
+		currentStatus = other.getCurrentStatus();
 	}
+
 	friend ostream& operator<<(ostream &os, User &other) {
 		os << other.getUser() << endl;
 		return os;
 	}
 };
 
+/*
+void User::getFileData(){
+	string data = "";
+
+	string friendFile = userName + "Friends";
+	ifstream readFriends(friendFile);
+	friendList->emptyList(); //reset
+	while (getline(readFriends, data)){
+		friendList->appendData(data);
+	}
+	readFriends.close();
+
+	string pendingFile = userName + "PendingFriends";
+	ifstream readPending(pendingFile);
+	pendingFriendList->emptyList();
+	while (getline(readPending, data)){
+		pendingFriendList->appendData(data);
+	}
+	readPending.close();
+
+	string requestFile = userName + "FriendRequests";
+	ifstream readRequests(requestFile);
+	friendRequests->emptyList();
+	while (getline(readPending, data)){
+		friendRequests->appendData(data);
+	}
+	readRequests.close();
+}*/
+
 void User::write(){
-	ofstream userfile;
-	userfile.open(userName.c_str());
+	ofstream userfile(userName);
 	userfile << userName << endl
-		<< name << endl
-		<< employment << endl
-		<< school << endl
-		<< age << endl;
+			<< name << endl
+			<< employment << endl
+			<< school << endl
+			<< age << endl
+			<< emote << endl;
 	userfile.close();
 }
-
+/*
 void User::writeFriends(){
-	string friendLists = userName + "Friends";
-	ofstream userfile;
-	userfile.open(friendLists.c_str());
+	string fl = userName + "Friends";
+	friendList->FileWrite(fl);
 
-	Node<string>* node = friendList->headNode;
+	string pfl = userName + "PendingFriends";
+	pendingFriendList->FileWrite(pfl);
 
-	while (node) {
-		userfile << node->getData() << endl;
-		node = node->next();
-	}
-    
-    string pendingFriendLists = userName + "PendingFriends";
-    ofstream otheruserfile;
-    otheruserfile.open(pendingFriendLists.c_str());
-    
-    Node<string>* node2 = friendList->headNode;
-    
-    while (node){
-        otheruserfile << node2->getData() << endl;
-        node2 = node2->next();
-    }
-}
+	string fr = userName + "FriendRequests";
+	friendRequests->FileWrite(fr);
+}*/
 
 void User::changeUser(string newUser){
 	userName = newUser;
@@ -197,32 +205,29 @@ void User::changeSchool(string newSchool){
 	school = newSchool;
 	write();
 }
+/*
+void User::addFriend(User &other){
+	other.getFileData(); //Ensures it is appended to the end of the most recent changes to the files
+	other.friendRequests->appendData(userName);
+	other.writeFriends();
 
-void User::unFriend(string username){
-	friendList->removeData(username);
+	getFileData();
+	pendingFriendList->appendData(other.getUser());
 	writeFriends();
 }
 
-void User::addFriend(User &other){
-    other.friendRequests->appendData(userName);
-	pendingFriendList->appendData(other.getUser());
-    writeFriends();
-}
-
 void User::acceptFriendRequest(User &other){
-    string username = other.getUser();
-    other.friendRequests->removeData(username);
-    other.friendList->appendData(username);
-    pendingFriendList->removeData(username);
-    friendList->appendData(username);
-    writeFriends();
-}
+	other.getFileData();
+	other.pendingFriendList->removeData(userName);
+	other.friendList->appendData(userName);
+	other.writeFriends();
 
-/*void User::friendRequests()
-{
-    friendRequests->print();
-}
-*/
+	getFileData();
+	friendRequests->removeData(other.getUser());
+	friendList->appendData(other.getUser());
+	writeFriends();
+}*/
+
 void User::setCurrentStatus(string status)
 {
 	string statusString = userName + "Status";
@@ -247,26 +252,32 @@ string User::getCurrentStatus()
 	return stats;
 }
 
-void User::printTimeline(){
-	vector<string> timeline;
-	string stats;
+void User::printTimeline(){ 
+	string stats; char buffer;
 	string statusString = userName + "Status";
-	ifstream statusFile;
-	statusFile.open(statusString.c_str());
+	ifstream statusFile(statusString, ios::ate);
 
-	while (!statusFile.eof()){
-		getline(statusFile, stats);
-		timeline.push_back(stats);
+	statusFile.seekg(0, ios::beg); //get position of beginning of the file
+	ifstream::pos_type posBeg = statusFile.tellg(); //set it to posBeg
+	statusFile.seekg(-1, ios::end); //goto the end of file
+
+	while (statusFile.tellg() != posBeg){ //while not at the beginning of file
+		buffer = static_cast<char>(statusFile.peek()); //get the last char
+		if (buffer != '\n'){ //if not endline
+			stats += buffer; //add to stats
+		}else{ //otherwise
+			reverse(stats.begin(), stats.end()); //reverse, making the line readable
+			cout << "\t\t" << stats << endl; //output
+			stats.clear(); //clear
+		}
+		statusFile.seekg(-1, ios::cur); //move up a line
 	}
-	statusFile.close();
 
-	reverse(timeline.begin(), timeline.end());
+	stats += static_cast<char>(statusFile.peek()); //get beginnng char
+	reverse(stats.begin(), stats.end()); //reverse
+	cout << "\t\t" << stats << endl; //output
 
-	for (int i = 0; i < timeline.size(); i++){
-		cout << "\t\t"; cout << timeline[i] << endl;
-	}
+	statusFile.close(); //close
 }
-
-
 
 #endif

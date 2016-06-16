@@ -19,5 +19,11 @@ class Node {
 	private:
 		Node<T>* nodePtr = nullptr;
 		T nodeData;
+
+		Node<T> &operator=(const Node<T>& other){
+			data = other.data;
+			left = other.left;
+			right = other.right;
+		}
 };
 #endif

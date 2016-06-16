@@ -2,6 +2,7 @@
 #ifndef BSTADT_H
 #define BSTADT_H
 
+#include <iomanip>
 #include "bstNode.h"
 #include <iostream>
 
@@ -26,6 +27,11 @@ private:
 	void preorderPrint(bstNode<T> *leaf); //print preorder tree
 	void postorderPrint(bstNode<T> *leaf); //print postorder tree
 	void inorderPrint(bstNode<T> *leaf); //print inorder tree
+	void postorderIndented(bstNode<T> *leaf, int indent); //prints indented tree
+
+	//Utility
+	bstNode<T> CopyBST(bstNode<T>* original, bstNode<T>*& copyTree); //copys the trees contents to other node
+	void operator=(bstADT<T>& other){ CopyBST(root, other->root); }
 
 public:
 	bstADT(); //constructor
@@ -44,6 +50,7 @@ public:
 	void preorderPrint(); //print preorder tree
 	void postorderPrint(); //print postorder tree
 	void inorderPrint(); //print inorder tree
+	void postorderIndented();//print postorder tree indented
 };
 
 template<class T> bstADT<T>::bstADT(){
@@ -161,6 +168,7 @@ template<class T> T bstADT<T>::searchBST(bstNode<T> *leaf, T targetkey){
 template<class T> void bstADT<T>::preorderPrint(){ preorderPrint(root); }
 template<class T> void bstADT<T>::postorderPrint(){ postorderPrint(root); }
 template<class T> void bstADT<T>::inorderPrint(){ inorderPrint(root); }
+template<class T> void bstADT<T>::postorderIndented() { postorderIndented(root, 0); }
 
 template<class T> void bstADT<T>::preorderPrint(bstNode<T>* leaf){
 	if (leaf != NULL){ //if root is NULl, noothing to print
@@ -183,6 +191,34 @@ template<class T> void bstADT<T>::inorderPrint(bstNode<T>* leaf){
 		inorderPrint(leaf->left); //print data in leaf left subtree
 		cout << leaf->data << " "; //print data in leaf
 		inorderPrint(leaf->right); //print data in leaf right subtree
+	}
+}
+
+template<class T> void bstADT<T>::postorderIndented(bstNode<T> *leaf, int indent) {
+	if (leaf != NULL) {
+		if (leaf->right) {
+			postorderIndented(leaf->right, indent + 4);
+		}
+		if (indent) {
+			cout << std::setw(indent) << ' ';
+		}
+		if (leaf->right) cout << " /\n" << setw(indent) << ' ';
+		cout << leaf->data << "\n ";
+		if (leaf->left) {
+			cout << setw(indent) << ' ' << " \\\n";
+			postorderIndented(leaf->left, indent + 4);
+		}
+	}
+}
+
+template<class T> bstNode<T> bstADT<T>::CopyBST(bstNode<T>* original, bstNode<T>*& copyTree){
+	if (original != NULL){
+		copyTree = original;
+		copyTree->data = original->data;
+		copyTree->left = CopyBST(original->left);
+		copyTree->right = CopyBST(original->right);
+	}else{
+		return;
 	}
 }
 

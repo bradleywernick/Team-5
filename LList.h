@@ -13,7 +13,7 @@ public:
 	LList(){}
 	/*counts the nuber of nodes in the list
 	*/
-	int count();
+	int count() const;
 	/* adds a node to the end of the linked list
 	* @param data for the node to contain
 	*/
@@ -36,27 +36,38 @@ public:
 	* sets head and tail pointer to nullptr
 	*/
 
-	vector<T> returnData(){
+	void emptyList();
+	virtual ~LList();
+
+	void print() const{
+		int i = 1;
+		Node<T>* node = headNode;
+		while (node){
+			cout << "\t\t[" << i << "] " << node->getData() << endl;
+			node = node->next();
+			i++;
+		}
+	}
+
+	void FileWrite(string filename) const{
+		Node<T>* node = headNode;
+		ofstream writeFile(filename);
+		while (node){
+			writeFile << node->getData() << endl;
+			node = node->next();
+		}
+	}
+
+	vector<T> returnData() const{
 		vector<T> data;
 		Node<T>* node = headNode;
 		while (node){
 			data.push_back(node->getData());
 			node = node->next();
 		}
+		return data;
 	}
 
-	void emptyList();
-	virtual ~LList();
-
-	void print(){
-		int i = 1;
-		Node<T>* node = headNode;
-		while (node){
-			cout << "[" << i << "]" << node->getData() << endl;
-			node = node->next();
-			i++;
-		}
-	}
 	Node<T>* searchNode(T data);
 protected:
 	Node<T>* headNode = nullptr;
@@ -76,7 +87,7 @@ private:
 
 
 template<typename T>
-int LList<T>::count(){
+int LList<T>::count() const{
 	int count = 0;
 	if (headNode){
 		Node<T>* node = headNode;
